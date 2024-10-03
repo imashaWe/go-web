@@ -35,4 +35,4 @@ jobs:
       with:
         context: .
         push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/goweb:latest,${{ secrets.DOCKER_USERNAME }}/goweb:${{ steps.version.outputs.version }}
+        tags: ${{ secrets.DOCKER_USERNAME }}/my-image:${{ steps.version.outputs.version }}
