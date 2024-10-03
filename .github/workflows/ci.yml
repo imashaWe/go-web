@@ -21,18 +21,9 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Install git-version-lite
-      run: |
-        curl -sSL https://github.com/anton-yurchenko/git-version-lite/releases/download/v0.1.2/git-version-lite-linux-amd64 -o /usr/local/bin/git-version-lite
-        chmod +x /usr/local/bin/git-version-lite
-
-    - name: Get version
-      id: version
-      run: echo ::set-output name=version::$(git-version-lite)
-
     - name: Build and push Docker image
       uses: docker/build-push-action@v2
       with:
         context: .
         push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/go-web:${{ steps.version.outputs.version }}
+        tags: ${{ secrets.DOCKER_USERNAME }}/go-web:latest
