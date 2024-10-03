@@ -1,0 +1,38 @@
+name: CI
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Install git-version-lite
+      run: |
+        curl -sSL https://github.com/anton-yurchenko/git-version-lite/releases/download/v0.1.2/git-version-lite-linux-amd64 -o /usr/local/bin/git-version-lite
+        chmod +x /usr/local/bin/git-version-lite
+
+    - name: Get version
+      id: version
+      run: echo ::set-output name=version::$(git-version-lite)
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        push: true
+        tags: ${{ secrets.DOCKER_USERNAME }}/go-web:latest,${{ secrets.DOCKER_USERNAME }}/go-web:${{ steps.version.outputs.version }}
